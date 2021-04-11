@@ -1,9 +1,10 @@
 from operator import mul, add
+import time
 
 class myArray(object):
     def __init__(self, array):
         self.array = array
-        self.shape = myArray.get_shape(self.array)
+        self.shape = myArray.get_shape(array)
 
     @staticmethod
     def get_shape(obj, shape=()):
@@ -11,7 +12,6 @@ class myArray(object):
             return shape
         
         shape += (len(obj), )
-
         if isinstance(obj[0], list):
             if not all(len(item) == len(obj[0]) for item in obj):
                 raise ValueError('All intra lists do not have shape length')
@@ -20,7 +20,7 @@ class myArray(object):
         return shape
     
     def __repr__(self):
-        return f'myArray{self.array}'
+        return f'myArray({self.array})'
 
     def __add__(self, other):
         if len(self.shape) > 2:
@@ -58,13 +58,10 @@ class myArray(object):
         
         return myArray([[sum(map(mul, row, col)) for col in zip(*b)] for row in a])
     
+    @property
     def t(self):
         x = self.array
         return myArray(list(map(list, zip(*x))))
-
-    @staticmethod
-    def getTranspose(x):
-        return list(map(list, zip(*x)))
 
     @staticmethod
     def getMatrixInverse(x):
@@ -82,7 +79,11 @@ class myArray(object):
                 minor = myArray.getMatrixMinor(x,r,c)
                 cofactorRow.append(((-1)**(r+c)) * myArray.getMatrixDeterminant(minor))
             cofactors.append(cofactorRow)
-        cofactors = myArray.getTranspose(cofactors)
+
+        cofactors = myArray(cofactors)
+        cofactors = cofactors.t
+        cofactors = cofactors.array
+
         for r in range(len(cofactors)):
             for c in range(len(cofactors)):
                 cofactors[r][c] = cofactors[r][c]/determinant
