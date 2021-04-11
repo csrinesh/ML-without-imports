@@ -1,6 +1,7 @@
 import csv
 from matrix_ops import *
 from matrix_ops import myArray as my
+from get_metrics import R2
 
 x_vars = ['x1', 'x2', 'x3']
 y_vars = ['y']
@@ -34,10 +35,13 @@ with open('datasets\lin_reg.csv') as csv_file:
     z = x.t()*x
     xtx_inv = myArray.getMatrixInverse(z.array)
     alpha = (xtx_inv*x.t())*y
-    
+
+    yhat = x*alpha
+
     if fit_intercept:
         print('Estimated slopes of the Linear Regression:', *[i[0] for i in alpha.array[:-1]])
         print('Estimated intercept of the Linear Regression:', *alpha.array[-1])
     else:
         print('Estimated slopes of the Linear Regression:',  *[i[0] for i in alpha.array])
 
+    print('R2:', R2(sum(y.array, []), sum(yhat.array, [])))
